@@ -2,13 +2,13 @@ const { NlpManager, ConversationContext } = require('node-nlp');
 const wiki = require('wikipedia');
 const manager = new NlpManager({ languages: ['en'] });
 const context = new ConversationContext();
-
 const { default: helmet } = require('helmet');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const PORT = 6969;
+
 
 const express = require('express');
 const app = express();
@@ -19,6 +19,15 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+
+const httpServer = require('http').createServer(app); // Create HTTP server
+const io = require('socket.io')(httpServer, {
+  cors: {
+    origin: '*',
+  },
+});
+
+
 
 // Define a function to extract entities
 function extractEntities(utterance) {
@@ -197,11 +206,26 @@ app.get('/chatBot', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+// Socket.IO
+io.of('/groupChat').on('connection', (socket) => {
+  console.log('A user connected to Group Chat');
+
+  socket.on('sendMessage', (message) => {
+    console.log('Received message:', message);
+    // Broadcast the message to all connected clients in the 'groupChat' namespace
+    io.of('/groupChat').emit('receiveMessage', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected from Group Chat');
+  });
+});
+
 
 // Start the server after loading the model
 loadModel()
   .then(() => {
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
