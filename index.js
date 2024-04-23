@@ -37,6 +37,7 @@ function extractEntities(utterance) {
 async function loadModel() {
   //add document
   manager.addDocument('en', 'hi', 'greeting');
+  manager.addDocument('en', 'hello', 'greeting.hello');
   manager.addDocument('en', 'hey', 'greeting');
   manager.addDocument('en', 'good morning', 'greeting');
   manager.addDocument('en', 'good afternoon', 'greeting');
@@ -46,8 +47,8 @@ async function loadModel() {
   manager.addDocument('en', 'bye bye take care', 'greetings.bye');
 
   //add answers
-  manager.addAnswer('en', 'greeting.hello', 'Hey there!  {{name}}');
-  manager.addAnswer('en', 'greeting.bye', 'Till next time, {{name}}!');
+  manager.addAnswer('en', 'greeting.hello', 'Hey there !');
+  manager.addAnswer('en', 'greeting.bye', 'Till next time !');
   manager.addAnswer('en', 'greeting', 'Hey!');
   manager.addAnswer('en', 'greeting', 'Hey there');
   manager.addAnswer('en', 'greeting', 'hi');
