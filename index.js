@@ -210,10 +210,9 @@ app.get('/chatBot', async (req, res) => {
 io.of('/groupChat').on('connection', (socket) => {
   console.log('A user connected to Group Chat');
 
-  socket.on('sendMessage', (message) => {
-    console.log('Received message:', message);
+  socket.on('sendMessage', ({ message, user }) => {
     // Broadcast the message to all connected clients in the 'groupChat' namespace
-    io.of('/groupChat').emit('receiveMessage', message);
+    io.of('/groupChat').emit('receiveMessage', { message, user });
   });
 
   socket.on('disconnect', () => {
